@@ -5,7 +5,7 @@ function validateTargetExpression(expression, selectedValues, target) {
     return { valid: false, message: "Select between 2 and 4 numbers." };
   }
 
-  const text = expression.replace(/×/g, "*").replace(/÷/g, "/");
+  const text = expression.replace(/×/g, "*").replace(/÷/g, "/").replace(/−/g, "-");
   const tokens = [];
   const usedNumbers = [];
   let position = 0;

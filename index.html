@@ -248,13 +248,80 @@
     @media (prefers-reduced-motion: reduce) {
       .cell.matching { animation: none; }
     }
+  
+    #tutorial-screen { max-width: 560px; margin: 30px auto; background: white; padding: 28px; border-radius: 16px; text-align: left; }
+    .tutorial-example { display:flex; justify-content:center; gap:12px; margin:24px 0; }
+    .example-cell { padding:16px 22px; border:2px solid #2563eb; border-radius:10px; background:#dbeafe; font-size:24px; }
+    .example-cell.faded { color:#9ca3af; border-color:#e5e7eb; background:#f3f4f6; }
+    #tutorial-screen button, #help-tutorial, .operator-button { padding:10px 14px; border:1px solid #ccd3df; border-radius:8px; background:white; }
+    #tutorial-progress { color:#596579; }
+    .stats { gap:6px; margin:10px 0; }
+    .stat { min-width:85px; padding:7px 10px; }
+    .stat-value { font-size:18px; }
+    #game-title { font-size:24px; margin-bottom:8px; }
+    #game-description { margin:6px 0; }
+    #number-tracker { margin-bottom:10px; gap:5px; }
+    .number-status { padding:4px 8px; min-width:30px; }
+    #target-controls { margin-top:10px; padding:12px; }
+    #target-controls p { margin:8px 0; }
+    #target-heading { margin:0 0 8px; }
+    #board-scroll { max-height:48vh; overflow:auto; padding:4px; }
+    #board-wrapper { margin:4px auto; max-width:480px; }
+    .operator-controls { display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin:10px 0; }
+    #message { min-height:40px; margin-top:10px; }
+    details.rules { background:white; border-radius:10px; padding:12px; }
+    details.rules summary { cursor:pointer; font-weight:bold; }
+  
+    :root { --ink:#17382f; --accent:#146c50; --paper:#f5f3ec; }
+    body { background:var(--paper); color:var(--ink); padding:30px 18px; }
+    main { max-width:1050px; }
+    h1,h2 { letter-spacing:-.04em; }
+    .eyebrow { font-size:12px; letter-spacing:.15em; font-weight:700; color:var(--accent); }
+    .welcome { padding:45px 15px; max-width:850px; margin:auto; }
+    #welcome-title { font-size:clamp(40px,7vw,76px); line-height:1.05; margin:20px 0; }
+    #welcome-title em { font-style:normal; color:var(--accent); }
+    .welcome-description { max-width:580px; margin:24px auto; line-height:1.7; color:#59675f; font-size:18px; }
+    .hero-puzzle { display:flex; align-items:center; justify-content:center; gap:12px; margin:35px 0 12px; }
+    .hero-puzzle span { width:65px; height:75px; display:grid; place-items:center; background:white; border:1px solid #d8dfd7; box-shadow:0 5px 0 #e0e5dc; border-radius:15px; font-size:32px; }
+    .hero-puzzle strong { padding:18px; border-radius:15px; background:#dcedca; font-size:32px; }
+    .hero-caption,.welcome-footnote { font-size:13px; color:#617166; margin:18px 0; }
+    .primary,#tutorial-next { background:var(--accent)!important; color:white; border:0!important; padding:15px 24px!important; border-radius:12px!important; font-weight:700; }
+    .secondary { padding:12px 18px; background:transparent; border:1px solid #ccd6ca; border-radius:10px; }
+    #menu-screen { padding:40px 0; }
+    #menu-title { font-size:clamp(32px,5vw,48px); }
+    .mode-list { max-width:none; grid-template-columns:repeat(3,1fr); gap:20px; }
+    .mode-card { min-height:210px; padding:28px; box-shadow:0 6px 0 #e6e9df; border-color:#d9dfd5; }
+    .mode-card:hover { background:#eef4e8; border-color:var(--accent); transform:translateY(-3px); }
+    .mode-card strong { font-size:25px; color:var(--ink); }
+    .mode-card::after { content:'Learn how to play →'; display:block; color:var(--accent); font-weight:700; margin-top:24px; }
+    #tutorial-screen { max-width:720px; padding:32px; box-shadow:0 8px 30px #17382f0d; border:1px solid #d9dfd5; }
+    #tutorial-title { font-size:36px; }
+    #tutorial-content { line-height:1.7; }
+    .demo-board { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; max-width:340px; margin:20px auto; }
+    .demo-cell { padding:18px; background:#eef4e8!important; border:2px solid #d4dfcb!important; font-size:24px; }
+    .demo-cell.chosen { border-color:var(--accent)!important; background:#dcedca!important; }
+    .demo-cell.faded { opacity:.25; }
+    #game-screen { max-width:760px; margin:auto; }
+    .cell.selected { background:#dcedca; border-color:var(--accent); }
+    .stat,.controls button,#target-controls { border-color:#d9dfd5; }
+    #target-controls h2 { color:var(--accent); }
+    @media(max-width:700px) { .mode-list {grid-template-columns:1fr;} .mode-card {min-height:0;} .welcome {padding:20px 0;} .hero-puzzle {gap:6px;} .hero-puzzle span {width:48px;height:58px;} #tutorial-screen {padding:20px;} }
   </style>
 </head>
 
 <body>
   <main>
-    <section id="menu-screen" aria-labelledby="menu-title">
-      <h1 id="menu-title">Number Board Game</h1>
+    <section id="welcome-screen" class="welcome" aria-labelledby="welcome-title">
+      <p class="eyebrow">A LITTLE LOGIC. A NEW CHALLENGE.</p>
+      <h1 id="welcome-title">Find your next<br><em>number connection.</em></h1>
+      <p class="welcome-description">A number puzzle inspired by Number Match. Clear the board your way: match pairs, challenge a computer, or build an expression.</p>
+      <div class="hero-puzzle" aria-label="Example: 8 plus 7, multiplied by 5, equals 75"><span>8</span><b>+</b><span>7</span><b>×</b><span>5</span><b>→</b><strong>75</strong></div>
+      <p class="hero-caption">One possible expression: (8 + 7) × 5 = 75</p>
+      <button id="explore-button" class="primary" type="button">Explore the three modes →</button>
+      <p class="welcome-footnote">No downloads. No time limit. Just your next move.</p>
+    </section>
+    <section id="menu-screen" aria-labelledby="menu-title" hidden>
+      <p class="eyebrow">THREE WAYS TO PLAY</p><h1 id="menu-title">Choose your challenge.</h1>
       <p>Choose your way to play.</p>
 
       <div class="mode-list">
@@ -280,6 +347,19 @@
             Use 2–4 numbers and arithmetic to reach a target.
           </span>
         </button>
+      </div>
+      <button id="welcome-button" class="secondary" type="button">← Back to welcome</button>
+    </section>
+
+    <section id="tutorial-screen" aria-labelledby="tutorial-title" hidden>
+      <p id="tutorial-progress"></p>
+      <h1 id="tutorial-title" tabindex="-1"></h1>
+      <div id="tutorial-content"></div>
+      <p id="tutorial-example-status" role="status" aria-live="polite"></p>
+      <div class="controls">
+        <button id="tutorial-back" type="button">Back</button>
+        <button id="tutorial-next" type="button">Continue</button>
+        <button id="tutorial-exit" type="button">Return</button>
       </div>
     </section>
 
@@ -334,8 +414,15 @@
         <button id="menu-button" type="button">Back to Menu</button>
       </div>
 
+      <div id="board-scroll">
+      <div id="board-wrapper">
+        <div id="board" aria-label="Number board"></div>
+        <svg id="connection-layer" aria-hidden="true"></svg>
+      </div>
+      </div>
+
       <div id="target-controls" hidden>
-        <h2>Target: <span id="target-value">10</span></h2>
+        <h2 id="target-heading">Target: <span id="target-value">10</span></h2>
         <p>
           Select 2–4 cells anywhere on the board.
           Use each selected number once.
@@ -344,6 +431,7 @@
           Selected: <strong id="target-selected">None</strong>
         </p>
 
+        <label for="expression-input">Build your expression</label>
         <div class="expression-controls">
           <input
             id="expression-input"
@@ -357,18 +445,24 @@
           <button id="clear-target" type="button">Clear Selection</button>
         </div>
 
-        <p>Use +, −, * or ×, / or ÷, and parentheses.</p>
+        <div class="operator-controls" aria-label="Insert arithmetic operator">
+          <button class="operator-button" data-operator="+" type="button">+</button>
+          <button class="operator-button" data-operator="-" type="button">−</button>
+          <button class="operator-button" data-operator="*" type="button">×</button>
+          <button class="operator-button" data-operator="/" type="button">÷</button>
+          <button class="operator-button" data-operator="(" type="button">(</button>
+          <button class="operator-button" data-operator=")" type="button">)</button>
+        </div>
+        <p>Type the selected digits and use these buttons for operations.</p>
       </div>
 
       <p id="message" role="status" aria-live="polite"></p>
 
-      <div id="board-wrapper">
-        <div id="board" aria-label="Number board"></div>
-        <svg id="connection-layer" aria-hidden="true"></svg>
-      </div>
 
-      <div class="rules">
-        <strong>Rules</strong>
+
+      <details class="rules">
+        <summary>Help and scoring</summary>
+        <button id="help-tutorial" type="button" hidden>Replay this mode’s introduction</button>
 
         <ul id="pair-rules">
           <li>Match equal numbers or numbers totaling 10.</li>
@@ -414,12 +508,13 @@
           <li>No valid moves and no additions means game over.</li>
           <li>Back to Menu ends the current session.</li>
         </ul>
-      </div>
+      </details>
     </section>
   </main>
 
   <script src="game.js"></script>
   <script src="ai.js"></script>
   <script src="target.js"></script>
+  <script src="onboarding.js"></script>
 </body>
 </html>

@@ -156,10 +156,17 @@ function cancelPendingActions() {
   animating = false;
 }
 
-function startGame(selectedMode) {
+function startGame(selectedMode, tutorialComplete = false) {
+  if (!tutorialComplete && ["solo", "ai", "target"].includes(selectedMode)) {
+    showModeTutorial(selectedMode, false);
+    return;
+  }
   if (!["solo", "ai", "target"].includes(selectedMode)) return;
 
   mode = selectedMode;
+  document.getElementById("tutorial-screen").hidden = true;
+  document.getElementById("help-tutorial").hidden = false;
+  document.getElementById("welcome-screen").hidden = true;
   document.getElementById("menu-screen").hidden = true;
   document.getElementById("game-screen").hidden = false;
 
