@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Number Board Game</title>
+
+  <style>
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+
+    body {
+      margin: 0;
+      padding: 24px 12px;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      color: #1f2937;
+      background: #f4f6fb;
+    }
+
+    main { max-width: 700px; margin: auto; }
+    h1 { margin-top: 0; }
+
+    button, input { font: inherit; }
+
+    button {
+      color: inherit;
+      cursor: pointer;
+    }
+
+    button:disabled { cursor: default; }
+
+    button:focus-visible, input:focus-visible {
+      outline: 3px solid #2563eb;
+      outline-offset: 3px;
+    }
+
+    .mode-list {
+      display: grid;
+      gap: 16px;
+      max-width: 480px;
+      margin: 32px auto;
+    }
+
+    .mode-card {
+      padding: 24px;
+      text-align: left;
+      border: 2px solid #dce2ed;
+      border-radius: 14px;
+      background: white;
+    }
+
+    .mode-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 22px;
+    }
+
+    .mode-card span {
+      display: block;
+      line-height: 1.5;
+      color: #596579;
+    }
+
+    .mode-card:hover {
+      border-color: #2563eb;
+      background: #eef2ff;
+    }
+
+    .stats, .controls, #number-tracker, .expression-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .stats { margin: 20px 0; }
+
+    .stat {
+      min-width: 105px;
+      padding: 12px;
+      border: 1px solid #dce2ed;
+      border-radius: 10px;
+      background: white;
+    }
+
+    .stat-label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #596579;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: bold;
+      font-variant-numeric: tabular-nums;
+    }
+
+    #turn-indicator {
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    .tracker-label { color: #596579; font-size: 14px; }
+    #number-tracker { margin-bottom: 20px; }
+
+    .number-status {
+      min-width: 40px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: white;
+      border: 1px solid #ccd3df;
+      font-weight: bold;
+    }
+
+    .number-status.cleared {
+      color: #047857;
+      background: #d1fae5;
+      border-color: #059669;
+    }
+
+    .controls button, .expression-controls button {
+      padding: 10px 14px;
+      border: 1px solid #ccd3df;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .controls button:hover:not(:disabled),
+    .expression-controls button:hover:not(:disabled) {
+      background: #e0e7ff;
+    }
+
+    button:disabled { opacity: 0.6; }
+    .cell:disabled { opacity: 1; }
+
+    #target-controls {
+      margin-top: 20px;
+      padding: 16px;
+      border: 1px solid #dce2ed;
+      border-radius: 12px;
+      background: white;
+    }
+
+    #target-controls h2 { margin-top: 0; color: #2563eb; }
+
+    #expression-input {
+      min-width: 0;
+      width: 240px;
+      max-width: 100%;
+      padding: 10px;
+      border: 1px solid #ccd3df;
+      border-radius: 8px;
+    }
+
+    #message {
+      min-height: 52px;
+      margin: 18px auto 0;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    #board-wrapper {
+      position: relative;
+      max-width: 600px;
+      margin: 16px auto;
+    }
+
+    #board {
+      position: relative;
+      display: grid;
+      gap: 6px;
+      width: 100%;
+    }
+
+    #connection-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 2;
+    }
+
+    .connection {
+      fill: none;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.65;
+    }
+
+    .connection.hint { stroke: #d97706; stroke-dasharray: 7 5; }
+    .connection.match { stroke: #059669; }
+
+    .cell {
+      aspect-ratio: 1;
+      min-width: 0;
+      padding: 0;
+      font-size: clamp(14px, 3vw, 24px);
+      border: 2px solid #ccd3df;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .cell:hover:not(:disabled) { background: #eef2ff; }
+    .cell.selected { background: #dbeafe; border-color: #2563eb; }
+    .cell.hinted { background: #fef3c7; border-color: #d97706; }
+
+    .cell.matching {
+      background: #d1fae5;
+      border-color: #059669;
+      animation: match-pulse 450ms ease-in-out;
+    }
+
+    .cell.removed {
+      color: rgba(31, 41, 55, 0.22);
+      background: #edf0f6;
+      border-color: transparent;
+    }
+
+    .cell.empty {
+      background: #edf0f6;
+      border-color: transparent;
+    }
+
+    @keyframes match-pulse {
+      50% { background: #a7f3d0; }
+    }
+
+    .rules {
+      max-width: 600px;
+      margin: 24px auto;
+      text-align: left;
+      line-height: 1.6;
+      color: #596579;
+      font-size: 14px;
+    }
+
+    @media (max-width: 450px) {
+      #board { gap: 3px; }
+      .cell { border-radius: 5px; }
+      .stat { min-width: 95px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cell.matching { animation: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <section id="menu-screen" aria-labelledby="menu-title">
+      <h1 id="menu-title">Number Board Game</h1>
+      <p>Choose your way to play.</p>
+
+      <div class="mode-list">
+        <button id="solo-button" class="mode-card" type="button">
+          <strong>Solo</strong>
+          <span>
+            Match equal numbers or pairs totaling 10.
+            Clear boards and build your score.
+          </span>
+        </button>
+
+        <button id="ai-button" class="mode-card" type="button">
+          <strong>Versus AI</strong>
+          <span>
+            Take turns against the computer.
+            Highest cumulative score wins.
+          </span>
+        </button>
+
+        <button id="target-button" class="mode-card" type="button">
+          <strong>Target Challenge</strong>
+          <span>
+            Use 2–4 numbers and arithmetic to reach a target.
+          </span>
+        </button>
+      </div>
+    </section>
+
+    <section id="game-screen" aria-labelledby="game-title" hidden>
+      <h1 id="game-title">
+        Number Board Game — <span id="mode-title">Solo</span>
+      </h1>
+      <p id="game-description"></p>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label" id="score-label">Score</span>
+          <span class="stat-value" id="score">0</span>
+        </div>
+
+        <div class="stat" id="ai-score-card" hidden>
+          <span class="stat-label">AI score</span>
+          <span class="stat-value" id="ai-score">0</span>
+        </div>
+
+        <div class="stat">
+          <span class="stat-label">Level</span>
+          <span class="stat-value" id="level">1</span>
+        </div>
+
+        <div class="stat">
+          <span class="stat-label">Level time</span>
+          <span class="stat-value" id="level-time">00:00</span>
+        </div>
+
+        <div class="stat">
+          <span class="stat-label">Total time</span>
+          <span class="stat-value" id="total-time">00:00</span>
+        </div>
+      </div>
+
+      <p id="turn-indicator" hidden></p>
+
+      <p class="tracker-label">
+        Number tracker — ✓ means none remain on this board
+      </p>
+      <div id="number-tracker" aria-label="Numbers remaining"></div>
+
+      <div class="controls">
+        <button id="hint-button" type="button">
+          Hint (<span id="hints-left">3</span> left)
+        </button>
+        <button id="add-button" type="button">
+          Add Numbers (<span id="adds-left">3</span> left)
+        </button>
+        <button id="new-game-button" type="button">New Game</button>
+        <button id="menu-button" type="button">Back to Menu</button>
+      </div>
+
+      <div id="target-controls" hidden>
+        <h2>Target: <span id="target-value">10</span></h2>
+        <p>
+          Select 2–4 cells anywhere on the board.
+          Use each selected number once.
+        </p>
+        <p>
+          Selected: <strong id="target-selected">None</strong>
+        </p>
+
+        <div class="expression-controls">
+          <input
+            id="expression-input"
+            type="text"
+            placeholder="Example: (8+7)*5"
+            aria-label="Arithmetic expression"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button id="submit-target" type="button">Submit</button>
+          <button id="clear-target" type="button">Clear Selection</button>
+        </div>
+
+        <p>Use +, −, * or ×, / or ÷, and parentheses.</p>
+      </div>
+
+      <p id="message" role="status" aria-live="polite"></p>
+
+      <div id="board-wrapper">
+        <div id="board" aria-label="Number board"></div>
+        <svg id="connection-layer" aria-hidden="true"></svg>
+      </div>
+
+      <div class="rules">
+        <strong>Rules</strong>
+
+        <ul id="pair-rules">
+          <li>Match equal numbers or numbers totaling 10.</li>
+          <li>
+            Connect along a row, column, diagonal, or reading order.
+            Intermediate cells must be empty.
+          </li>
+          <li>Earn 2 points plus 1 per empty cell crossed.</li>
+          <li>
+            In Versus AI, successful moves alternate turns.
+            Each player receives their own points and bonuses.
+          </li>
+        </ul>
+
+        <ul id="target-rules" hidden>
+          <li>Select 2–4 numbers anywhere on the board.</li>
+          <li>
+            Use each selected number exactly once to reach the target.
+            Multiplication and division follow normal precedence.
+          </li>
+          <li>
+            Parentheses and fractional intermediate results are allowed.
+            Division by zero is invalid.
+          </li>
+          <li>Earn 2 points per number used in a correct expression.</li>
+          <li>The target remains fixed throughout each level.</li>
+        </ul>
+
+        <ul>
+          <li>Faded numbers are empty and do not block moves.</li>
+          <li>Cleared rows disappear; columns never collapse.</li>
+          <li>
+            Earn 10 bonus points per cleared row and 150 per cleared board.
+          </li>
+          <li>
+            Each level provides 3 hints and 3 additions.
+            Additions are shared in Versus AI and do not consume a turn.
+          </li>
+          <li>
+            Scores and total time carry forward.
+            Level time, hints, and additions reset on each new level.
+          </li>
+          <li>No valid moves and no additions means game over.</li>
+          <li>Back to Menu ends the current session.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <script src="game.js"></script>
+  <script src="ai.js"></script>
+  <script src="target.js"></script>
+</body>
+</html>
