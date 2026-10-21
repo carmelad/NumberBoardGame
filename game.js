@@ -195,6 +195,7 @@ function startNewGame() {
   if (mode === null) return;
 
   cancelPendingActions();
+  if (typeof finishTrackedSession === "function" && !(typeof restoringSavedGame !== "undefined" && restoringSavedGame)) finishTrackedSession("abandoned");
   score = 0;
   aiScore = 0;
   level = 1;
@@ -204,6 +205,7 @@ function startNewGame() {
   runStartedAt = performance.now();
 
   resetLevel();
+  if (typeof beginTrackedSession === "function" && !(typeof restoringSavedGame !== "undefined" && restoringSavedGame)) beginTrackedSession();
   setMessage(
     mode === "target"
       ? "Select 2–4 numbers, then build your expression."
@@ -214,6 +216,7 @@ function startNewGame() {
 
 function backToMenu() {
   cancelPendingActions();
+  if (typeof saveGameProgress === "function") saveGameProgress();
   mode = null;
   activeConnection = null;
   selectedCell = null;
@@ -234,6 +237,7 @@ function checkBoardState() {
 
   gameOver = true;
   stoppedAt = performance.now();
+  if (typeof finishTrackedSession === "function") finishTrackedSession(mode === "ai" ? (score > aiScore ? "won" : score < aiScore ? "lost" : "draw") : "completed");
 
   if (mode === "ai") {
     const result =
@@ -642,6 +646,7 @@ function renderBoard() {
   renderNumberTracker();
   updateTimers();
   drawConnection();
+  if (!animating && typeof saveGameProgress === "function") saveGameProgress();
 }
 
 document.getElementById("solo-button")

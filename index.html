@@ -306,6 +306,15 @@
     .stat,.controls button,#target-controls { border-color:#d9dfd5; }
     #target-controls h2 { color:var(--accent); }
     @media(max-width:700px) { .mode-list {grid-template-columns:1fr;} .mode-card {min-height:0;} .welcome {padding:20px 0;} .hero-puzzle {gap:6px;} .hero-puzzle span {width:48px;height:58px;} #tutorial-screen {padding:20px;} }
+    .identity-card {background:#fff;border:1px solid #d9dfd5;border-radius:16px;padding:18px;margin:20px auto;max-width:520px}
+    .identity-card button {margin:5px;padding:10px 14px;border-radius:9px;border:1px solid #aab9a5}
+    .identity-card input {padding:10px;margin:8px;max-width:90%;border-radius:8px;border:1px solid #aab9a5}
+    .profile-toolbar {display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:520px;margin:10px auto}
+    .dashboard-grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+    .dashboard-card {background:white;border:1px solid #d9dfd5;border-radius:12px;padding:15px}
+    .chart-container {background:white;border:1px solid #d9dfd5;border-radius:12px;padding:14px;margin:15px 0;overflow-x:auto}
+    #session-history table {width:100%;border-collapse:collapse;background:white}
+    #session-history th,#session-history td {padding:9px;border-bottom:1px solid #ddd;text-align:left}
   </style>
 </head>
 
@@ -317,13 +326,26 @@
       <p class="welcome-description">A number puzzle inspired by Number Match. Clear the board your way: match pairs, challenge a computer, or build an expression.</p>
       <div class="hero-puzzle" aria-label="Example: 8 plus 7, multiplied by 5, equals 75"><span>8</span><b>+</b><span>7</span><b>×</b><span>5</span><b>→</b><strong>75</strong></div>
       <p class="hero-caption">One possible expression: (8 + 7) × 5 = 75</p>
-      <button id="explore-button" class="primary" type="button">Explore the three modes →</button>
+      <section id="identity-gate" class="identity-card">
+        <h2>Choose how to play</h2>
+        <button id="guest-entry" class="primary" type="button">Play as Guest</button>
+        <button id="signup-entry" type="button">Create Account (coming soon)</button>
+        <button id="login-entry" type="button">Log In (coming soon)</button>
+        <p id="identity-message" role="status"></p>
+      </section>
+      <button id="explore-button" class="primary" type="button" hidden>Explore the three modes →</button>
+      <button id="welcome-resume-button" type="button" class="primary" hidden>Resume Saved Game</button>
       <p class="welcome-footnote">No downloads. No time limit. Just your next move.</p>
     </section>
     <section id="menu-screen" aria-labelledby="menu-title" hidden>
       <p class="eyebrow">THREE WAYS TO PLAY</p><h1 id="menu-title">Choose your challenge.</h1>
       <p>Choose your way to play.</p>
+      <div class="profile-toolbar"><span id="player-greeting"></span><button id="dashboard-button" type="button">My Dashboard</button></div>
 
+      <div style="margin:18px 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <button id="resume-game-button" type="button" class="primary" hidden>Resume Saved Game</button>
+        <span id="saved-game-details" aria-live="polite"></span>
+      </div>
       <div class="mode-list">
         <button id="solo-button" class="mode-card" type="button">
           <strong>Solo</strong>
@@ -351,6 +373,19 @@
       <button id="welcome-button" class="secondary" type="button">← Back to welcome</button>
     </section>
 
+    <section id="dashboard-screen" aria-labelledby="dashboard-title" hidden>
+      <p class="eyebrow">YOUR GAME HISTORY</p><h1 id="dashboard-title">Player dashboard</h1>
+      <div class="identity-card"><label for="profile-name">Username</label>
+        <input id="profile-name" maxlength="30" autocomplete="off" />
+        <button id="save-profile-name" type="button">Update username</button>
+        <p id="profile-message" role="status"></p></div>
+      <h2>Personal bests by mode</h2><div id="personal-bests" class="dashboard-grid"></div>
+      <h2>Level progression by session</h2>
+      <label for="history-mode">Game mode</label><select id="history-mode"><option value="solo">Solo</option><option value="ai">Versus AI</option><option value="target">Target Challenge</option></select>
+      <div id="progress-chart" class="chart-container" role="img" aria-label="Session level progression"></div>
+      <h2>Recent sessions</h2><div id="session-history"></div>
+      <button id="dashboard-back" type="button">← Back to modes</button>
+    </section>
     <section id="tutorial-screen" aria-labelledby="tutorial-title" hidden>
       <p id="tutorial-progress"></p>
       <h1 id="tutorial-title" tabindex="-1"></h1>
@@ -506,15 +541,18 @@
             Level time, hints, and additions reset on each new level.
           </li>
           <li>No valid moves and no additions means game over.</li>
-          <li>Back to Menu ends the current session.</li>
+          <li>Back to Menu saves your progress. Use Resume Saved Game to continue.</li>
         </ul>
       </details>
     </section>
   </main>
 
+  <script src="profiles.js"></script>
   <script src="game.js"></script>
   <script src="ai.js"></script>
   <script src="target.js"></script>
   <script src="onboarding.js"></script>
+  <script src="persistence.js"></script>
+  <script src="profile-ui.js"></script>
 </body>
 </html>

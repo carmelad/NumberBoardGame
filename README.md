@@ -118,3 +118,11 @@ challenge mode.
 ## Author
 
 Carmela Dangale
+
+
+## Guest profile and history (October 2026 prototype)
+Choose **Play as Guest** on the landing page and enter a username (2–30 characters). The dashboard offers editable username, per-mode personal bests, a level-by-session chart, and the last 20 sessions. Game sessions are stored in `localStorage` in this browser; an unfinished game continues under the same session ID when resumed. Starting a new game marks the previous unfinished session as abandoned.
+
+**Not implemented:** real registration, login, email/password, MFA, cloud SQL, cross-device sync, or global leaderboards. The account buttons explicitly identify those features as upcoming. Local history can be lost if browser storage is cleared and is not authoritative for global scores.
+
+Serve the directory with `python3 -m http.server 8000` and visit `http://localhost:8000`. Test guest creation, each game mode, restart, resume, username editing, and dashboard mode filters.
